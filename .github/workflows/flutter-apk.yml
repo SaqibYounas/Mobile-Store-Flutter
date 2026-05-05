@@ -1,0 +1,40 @@
+name: Flutter CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1️⃣ Checkout code
+      - uses: actions/checkout@v4
+
+      # 2️⃣ Setup Java (required for Android build)
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # 3️⃣ Setup Flutter
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      # 4️⃣ Get dependencies
+      - name: Install dependencies
+        run: flutter pub get
+
+      # 8️⃣ Build APK (release)
+      - name: Build APK
+        run: flutter build apk --release
+
+      # 9️⃣ Upload APK artifact
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
