@@ -64,9 +64,12 @@ class AuthFormCard extends StatelessWidget {
             Text(
               isLogin
                   ? 'Sign in to continue shopping'
-                  : 'Join TrendNest in a few taps',
+                  : 'Join LuxeCart in a few taps',
               style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                color: Theme.of(context)
+                    .colorScheme
+                    .onSurface
+                    .withValues(alpha: 0.6),
               ),
             ),
             const SizedBox(height: 22),
@@ -75,9 +78,8 @@ class AuthFormCard extends StatelessWidget {
                 label: 'Full Name',
                 icon: Icons.person_outline_rounded,
                 controller: nameController,
-                validator: (v) => (v == null || v.isEmpty)
-                    ? 'Please enter your name'
-                    : null,
+                validator: (v) =>
+                    (v == null || v.isEmpty) ? 'Please enter your name' : null,
               ),
               const SizedBox(height: 14),
             ],
@@ -86,9 +88,8 @@ class AuthFormCard extends StatelessWidget {
               icon: Icons.alternate_email_rounded,
               controller: emailController,
               keyboardType: TextInputType.emailAddress,
-              validator: (v) => (v != null && v.contains('@'))
-                  ? null
-                  : 'Enter a valid email',
+              validator: (v) =>
+                  (v != null && v.contains('@')) ? null : 'Enter a valid email',
             ),
             const SizedBox(height: 14),
             AuthTextField(
@@ -106,8 +107,8 @@ class AuthFormCard extends StatelessWidget {
                   onPressed: onForgot,
                   style: TextButton.styleFrom(
                     foregroundColor: const Color(0xFF7C3AED),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 0, vertical: 6),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 0, vertical: 6),
                   ),
                   child: const Text(
                     'Forgot password?',

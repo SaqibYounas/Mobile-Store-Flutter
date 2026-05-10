@@ -55,7 +55,7 @@ class WelcomeScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 28),
                     const Text(
-                      'TrendNest',
+                      'LuxeCart',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 42,
