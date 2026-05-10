@@ -9,12 +9,14 @@ import 'package:e_commerce_flutter/src/view/screen/email_update_screen.dart';
 import 'package:e_commerce_flutter/src/view/screen/forgot_password_screen.dart';
 import 'package:e_commerce_flutter/src/view/screen/home_screen.dart';
 import 'package:e_commerce_flutter/src/view/screen/payment_screen.dart';
+import 'package:e_commerce_flutter/src/view/screen/welcome_screen.dart';
 
 /// Application routes - single source of truth for all navigation.
 class AppRoutes {
   const AppRoutes._();
 
   // ---- Route names -------------------------------------------------------
+  static const String welcome = '/welcome';
   static const String auth = '/auth';
   static const String forgotPassword = '/forgot-password';
   static const String emailUpdate = '/email-update';
@@ -24,6 +26,10 @@ class AppRoutes {
 
   // ---- Route definitions -------------------------------------------------
   static final List<GetPage> pages = [
+    GetPage(
+      name: welcome,
+      page: () => const WelcomeScreen(),
+    ),
     GetPage(
       name: auth,
       page: () => const AuthScreen(),

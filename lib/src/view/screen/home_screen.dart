@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:e_commerce_flutter/src/config/app_routes.dart';
+import 'package:e_commerce_flutter/src/core/app_toast.dart';
+import 'package:e_commerce_flutter/src/core/services/session_service.dart';
 import 'package:e_commerce_flutter/src/model/bottom_tab.dart';
 import 'package:e_commerce_flutter/src/view/animation/page_transition_switcher_wrapper.dart';
 import 'package:e_commerce_flutter/src/view/screen/cart_screen.dart';
@@ -56,6 +60,19 @@ class _HomeScreenState extends State<HomeScreen> {
     ),
   ];
 
+  static const _cartTabIndex = 2;
+
+  void _onTabChanged(int index) {
+    // Cart tab is gated behind authentication. Browsing/wishlist/orders
+    // remain open so users can window-shop without an account.
+    if (index == _cartTabIndex && !SessionService.isLoggedIn) {
+      AppToast.info('Login Required', 'Sign in to view your cart');
+      Get.toNamed(AppRoutes.auth);
+      return;
+    }
+    setState(() => _currentIndex = index);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,7 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: ModernBottomBar(
         tabs: _tabs,
         currentIndex: _currentIndex,
-        onChanged: (i) => setState(() => _currentIndex = i),
+        onChanged: _onTabChanged,
       ),
     );
   }

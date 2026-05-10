@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:e_commerce_flutter/src/core/app_color.dart';
+import 'package:e_commerce_flutter/src/core/services/image_resolver.dart';
 
 /// Square 84×84 product thumbnail used inside cart items. Falls back to
-/// a generic icon when no image is available or the asset fails to load.
+/// a generic icon when no image is available or the network image fails
+/// to load.
 class CartProductThumb extends StatelessWidget {
   const CartProductThumb({super.key, required this.imageUrl});
 
@@ -10,7 +12,7 @@ class CartProductThumb extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasImage = imageUrl != null && imageUrl!.isNotEmpty;
+    final resolved = ProductImageResolver.resolve(imageUrl);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final fallbackColor =
         Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5);
@@ -23,9 +25,9 @@ class CartProductThumb extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(14),
-        child: hasImage
-            ? Image.asset(
-                imageUrl!,
+        child: resolved != null
+            ? Image.network(
+                resolved,
                 fit: BoxFit.cover,
                 errorBuilder: (_, __, ___) => Icon(
                   Icons.image_not_supported_outlined,

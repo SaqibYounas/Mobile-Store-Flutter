@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:e_commerce_flutter/src/core/app_color.dart';
+import 'package:e_commerce_flutter/src/core/services/image_resolver.dart';
 import 'package:e_commerce_flutter/src/model/product.dart';
 
 /// Wide gradient card for the "Featured" horizontal row on the home
@@ -31,19 +32,51 @@ class FeaturedProductCard extends StatelessWidget {
         child: Row(
           children: [
             Expanded(child: _Details(product: product)),
-            Image.asset(
-              product.imageUrl ?? 'assets/images/logo.png',
-              width: 100,
-              fit: BoxFit.contain,
-              errorBuilder: (_, __, ___) => const Icon(
-                Icons.image_not_supported,
-                color: Colors.white54,
-                size: 60,
-              ),
-            ),
+            _FeaturedImage(imageUrl: product.imageUrl),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _FeaturedImage extends StatelessWidget {
+  const _FeaturedImage({required this.imageUrl});
+
+  final String? imageUrl;
+
+  @override
+  Widget build(BuildContext context) {
+    final resolved = ProductImageResolver.resolve(imageUrl);
+    const fallback = Icon(
+      Icons.image_not_supported,
+      color: Colors.white54,
+      size: 60,
+    );
+    if (resolved == null) {
+      return const SizedBox(width: 100, child: fallback);
+    }
+    return Image.network(
+      resolved,
+      width: 100,
+      fit: BoxFit.contain,
+      loadingBuilder: (_, child, progress) {
+        if (progress == null) return child;
+        return const SizedBox(
+          width: 100,
+          child: Center(
+            child: SizedBox(
+              width: 22,
+              height: 22,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                valueColor: AlwaysStoppedAnimation(Colors.white),
+              ),
+            ),
+          ),
+        );
+      },
+      errorBuilder: (_, __, ___) => const SizedBox(width: 100, child: fallback),
     );
   }
 }

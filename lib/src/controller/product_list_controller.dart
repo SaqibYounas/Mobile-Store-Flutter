@@ -56,12 +56,26 @@ class ProductListController extends GetxController {
       if (cartMap.containsKey(p.id)) p.cartQuantity = cartMap[p.id]!;
     }
 
-    allProducts = rows;
+    allProducts = _sortSaleFirst(rows);
     _applyAllFilters();
   }
 
+  /// Stable sort that floats discounted products to the top while keeping
+  /// the relative order (newest first, as returned by the backend) within
+  /// each group.
+  List<Product> _sortSaleFirst(List<Product> rows) {
+    final list = List<Product>.from(rows);
+    list.sort((a, b) {
+      final aSale = a.hasDiscount ? 0 : 1;
+      final bSale = b.hasDiscount ? 0 : 1;
+      return aSale.compareTo(bSale);
+    });
+    return list;
+  }
+
   /// Recompute `filteredProducts` from `allProducts` based on current
-  /// selected category + search query.
+  /// selected category + search query. Sale products are always
+  /// surfaced first within the result set.
   void _applyAllFilters() {
     Iterable<Product> result = allProducts;
     if (selectedCategory.value.isNotEmpty) {
@@ -76,7 +90,7 @@ class ProductListController extends GetxController {
           (p.category?.toLowerCase().contains(q) ?? false) ||
           p.about.toLowerCase().contains(q));
     }
-    filteredProducts.assignAll(result);
+    filteredProducts.assignAll(_sortSaleFirst(result.toList()));
   }
 
   // ---- Fetching Products ---------------------------------------------------
@@ -117,7 +131,7 @@ class ProductListController extends GetxController {
       final list = await ProductService.search(query);
       // After remote search returns we still apply the category filter
       // in-memory so search results respect the selected category chip.
-      allProducts = list;
+      allProducts = _sortSaleFirst(list);
       _applyAllFilters();
     } catch (e) {
       debugPrint('searchRemote error: $e');
@@ -138,7 +152,7 @@ class ProductListController extends GetxController {
       try {
         isLoading.value = true;
         final list = await ProductService.fetchByCategory(category);
-        allProducts = list;
+        allProducts = _sortSaleFirst(list);
         _applyAllFilters();
       } catch (e) {
         debugPrint('selectCategory error: $e');

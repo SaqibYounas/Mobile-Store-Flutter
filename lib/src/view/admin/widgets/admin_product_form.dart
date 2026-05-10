@@ -108,10 +108,21 @@ class _AdminProductFormState extends State<AdminProductForm> {
   @override
   Widget build(BuildContext context) {
     final mq = MediaQuery.of(context);
-    return Padding(
-      padding: EdgeInsets.only(bottom: mq.viewInsets.bottom),
+    final keyboard = mq.viewInsets.bottom;
+    // Subtract the keyboard height from the sheet's max height so the
+    // sheet shrinks to fit instead of being pushed off-screen, and let
+    // the inner scroll view bring the focused field into view as the
+    // user types.
+    final maxHeight = (mq.size.height * 0.92 - keyboard).clamp(
+      280.0,
+      mq.size.height * 0.92,
+    );
+    return AnimatedPadding(
+      duration: const Duration(milliseconds: 180),
+      curve: Curves.easeOut,
+      padding: EdgeInsets.only(bottom: keyboard),
       child: Container(
-        constraints: BoxConstraints(maxHeight: mq.size.height * 0.92),
+        constraints: BoxConstraints(maxHeight: maxHeight),
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
@@ -121,6 +132,8 @@ class _AdminProductFormState extends State<AdminProductForm> {
           child: Form(
             key: _formKey,
             child: SingleChildScrollView(
+              keyboardDismissBehavior:
+                  ScrollViewKeyboardDismissBehavior.onDrag,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -145,9 +158,9 @@ class _AdminProductFormState extends State<AdminProductForm> {
                       ),
                       FormTextField(
                         controller: _imageUrl,
-                        label: 'Image Asset Path',
+                        label: 'Image File',
                         icon: Icons.image_outlined,
-                        hint: 'assets/images/your_image.png',
+                        hint: 'products/your_image.jpg',
                       ),
                     ],
                   ),

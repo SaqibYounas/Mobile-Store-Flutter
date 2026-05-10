@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:e_commerce_flutter/src/controller/admin_controller.dart';
 import 'package:e_commerce_flutter/src/core/app_color.dart';
 import 'package:e_commerce_flutter/src/core/app_typography.dart';
+import 'package:e_commerce_flutter/src/core/services/image_resolver.dart';
 import 'package:e_commerce_flutter/src/model/product.dart';
 import 'package:e_commerce_flutter/src/view/admin/widgets/admin_chip.dart';
 import 'package:e_commerce_flutter/src/view/admin/widgets/admin_product_form.dart';
@@ -90,26 +91,30 @@ class _Thumbnail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasImage = imageUrl != null && imageUrl!.isNotEmpty;
+    final resolved = ProductImageResolver.resolve(imageUrl);
+    final fallback = Container(
+      width: 64,
+      height: 64,
+      color: Theme.of(context).brightness == Brightness.dark
+          ? AppColor.darkSurfaceGrey
+          : AppColor.surfaceGrey,
+      child: Icon(
+        Icons.image_not_supported_outlined,
+        color:
+            Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+      ),
+    );
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
-      child: Image.asset(
-        hasImage ? imageUrl! : 'assets/images/logo.png',
-        width: 64,
-        height: 64,
-        fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => Container(
-          width: 64,
-          height: 64,
-          color: Theme.of(context).brightness == Brightness.dark
-              ? AppColor.darkSurfaceGrey
-              : AppColor.surfaceGrey,
-          child: Icon(
-            Icons.image_not_supported_outlined,
-            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
-          ),
-        ),
-      ),
+      child: resolved == null
+          ? fallback
+          : Image.network(
+              resolved,
+              width: 64,
+              height: 64,
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => fallback,
+            ),
     );
   }
 }

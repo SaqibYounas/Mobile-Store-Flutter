@@ -29,7 +29,10 @@ Future<void> main() async {
   // the first frame.
   Get.put(ThemeController(), permanent: true);
 
-  String initialRoute = AppRoutes.auth;
+  // Default first-launch flow goes through the welcome screen so users can
+  // browse without signing in. Authenticated users skip straight to the
+  // appropriate landing screen for their role.
+  String initialRoute = AppRoutes.welcome;
   if (AuthService.isLoggedIn) {
     initialRoute = SessionService.isAdmin ? AppRoutes.admin : AppRoutes.home;
   }

@@ -64,7 +64,7 @@ class AuthFormCard extends StatelessWidget {
             Text(
               isLogin
                   ? 'Sign in to continue shopping'
-                  : 'Join LuxeCart in a few taps',
+                  : 'Join TrendNest in a few taps',
               style: TextStyle(
                 color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
               ),

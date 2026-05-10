@@ -6,6 +6,7 @@ import 'package:e_commerce_flutter/src/core/app_color.dart';
 import 'package:e_commerce_flutter/src/core/app_toast.dart';
 import 'package:e_commerce_flutter/src/core/services/session_service.dart';
 import 'package:e_commerce_flutter/src/view/widget/app_card.dart';
+import 'package:e_commerce_flutter/src/view/widget/empty_state.dart';
 import 'package:e_commerce_flutter/src/view/widget/profile/profile_hero.dart';
 import 'package:e_commerce_flutter/src/view/widget/profile/profile_tile.dart';
 import 'package:e_commerce_flutter/src/view/widget/profile/theme_toggle_tile.dart';
@@ -61,7 +62,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     await _supabase.auth.signOut();
     await SessionService.clearSession();
     if (!mounted) return;
-    Navigator.pushNamedAndRemoveUntil(context, AppRoutes.auth, (_) => false);
+    Navigator.pushNamedAndRemoveUntil(context, AppRoutes.welcome, (_) => false);
   }
 
   Future<void> _openEmailUpdate() async {
@@ -79,6 +80,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (!SessionService.isLoggedIn) {
+      return Scaffold(
+        body: EmptyState(
+          icon: Icons.account_circle_outlined,
+          title: 'You are browsing as a guest',
+          subtitle: 'Sign in to manage your profile and orders.',
+          action: ElevatedButton.icon(
+            onPressed: () => Get.toNamed(AppRoutes.auth),
+            icon: const Icon(Icons.login),
+            label: const Text('Sign In'),
+          ),
+        ),
+      );
+    }
     if (_isLoading) {
       return const Scaffold(
         body: Center(child: CircularProgressIndicator()),

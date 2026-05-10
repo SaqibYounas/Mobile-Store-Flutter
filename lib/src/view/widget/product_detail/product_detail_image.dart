@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:e_commerce_flutter/src/core/services/image_resolver.dart';
 import 'package:e_commerce_flutter/src/model/product.dart';
 
 /// Hero image at the top of the product detail screen. Wraps the asset
@@ -39,19 +40,35 @@ class ProductDetailImage extends StatelessWidget {
         child: Center(
           child: Padding(
             padding: const EdgeInsets.all(20),
-            child: Image.asset(
-              product.imageUrl ?? 'assets/images/logo.png',
-              width: double.infinity,
-              height: double.infinity,
-              fit: BoxFit.contain,
-              errorBuilder: (_, __, ___) => const Icon(
-                Icons.image_not_supported,
-                color: Colors.white54,
-                size: 60,
-              ),
-            ),
+            child: _buildImage(),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildImage() {
+    final resolved = ProductImageResolver.resolve(product.imageUrl);
+    if (resolved == null) {
+      return const Icon(
+        Icons.image_not_supported,
+        color: Colors.white54,
+        size: 60,
+      );
+    }
+    return Image.network(
+      resolved,
+      width: double.infinity,
+      height: double.infinity,
+      fit: BoxFit.contain,
+      loadingBuilder: (_, child, progress) {
+        if (progress == null) return child;
+        return const Center(child: CircularProgressIndicator());
+      },
+      errorBuilder: (_, __, ___) => const Icon(
+        Icons.image_not_supported,
+        color: Colors.white54,
+        size: 60,
       ),
     );
   }

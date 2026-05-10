@@ -23,7 +23,7 @@ class AuthHeader extends StatelessWidget {
         ),
         const SizedBox(height: 14),
         const Text(
-          'LuxeCart',
+          'TrendNest',
           style: TextStyle(
             fontSize: 36,
             fontWeight: FontWeight.w900,
