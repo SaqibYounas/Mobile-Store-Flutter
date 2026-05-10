@@ -108,189 +108,177 @@ class _AdminProductFormState extends State<AdminProductForm> {
   @override
   Widget build(BuildContext context) {
     final mq = MediaQuery.of(context);
-    final keyboard = mq.viewInsets.bottom;
-    // Subtract the keyboard height from the sheet's max height so the
-    // sheet shrinks to fit instead of being pushed off-screen, and let
-    // the inner scroll view bring the focused field into view as the
-    // user types.
-    final maxHeight = (mq.size.height * 0.92 - keyboard).clamp(
-      280.0,
-      mq.size.height * 0.92,
-    );
-    return AnimatedPadding(
-      duration: const Duration(milliseconds: 180),
-      curve: Curves.easeOut,
-      padding: EdgeInsets.only(bottom: keyboard),
-      child: Container(
-        constraints: BoxConstraints(maxHeight: maxHeight),
-        decoration: BoxDecoration(
-          color: Theme.of(context).cardColor,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 14, 20, 20),
-          child: Form(
-            key: _formKey,
-            child: SingleChildScrollView(
-              keyboardDismissBehavior:
-                  ScrollViewKeyboardDismissBehavior.onDrag,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _DragHandle(),
-                  const SizedBox(height: 18),
-                  _FormHeader(isEdit: _isEdit),
-                  const SizedBox(height: 18),
-                  FormSection(
-                    title: 'Basics',
-                    children: [
-                      FormTextField(
-                        controller: _name,
-                        label: 'Product Name',
-                        icon: Icons.shopping_bag_outlined,
-                        validator: _required,
-                      ),
-                      FormTextField(
-                        controller: _category,
-                        label: 'Category',
-                        icon: Icons.category_outlined,
-                        hint: 'e.g. Mobile, Tablet, Headphone',
-                      ),
-                      FormTextField(
-                        controller: _imageUrl,
-                        label: 'Image File',
-                        icon: Icons.image_outlined,
-                        hint: 'products/your_image.jpg',
-                      ),
-                    ],
-                  ),
-                  FormSection(
-                    title: 'Description',
-                    children: [
-                      FormTextField(
-                        controller: _description,
-                        label: 'Short Description',
-                        icon: Icons.short_text,
-                      ),
-                      FormTextField(
-                        controller: _about,
-                        label: 'Full Details',
-                        icon: Icons.description_outlined,
-                        maxLines: 3,
-                      ),
-                    ],
-                  ),
-                  FormSection(
-                    title: 'Pricing & Stock',
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: FormTextField(
-                              controller: _price,
-                              label: 'Price (Rs)',
-                              icon: Icons.currency_rupee,
-                              keyboardType:
-                                  const TextInputType.numberWithOptions(
-                                      decimal: true),
-                              validator: _requiredNumber,
-                            ),
+    final maxHeight = mq.size.height * 0.92;
+    
+    return Container(
+      constraints: BoxConstraints(maxHeight: maxHeight),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(20, 14, 20, 20),
+        child: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            keyboardDismissBehavior:
+                ScrollViewKeyboardDismissBehavior.onDrag,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _DragHandle(),
+                const SizedBox(height: 18),
+                _FormHeader(isEdit: _isEdit),
+                const SizedBox(height: 18),
+                FormSection(
+                  title: 'Basics',
+                  children: [
+                    FormTextField(
+                      controller: _name,
+                      label: 'Product Name',
+                      icon: Icons.shopping_bag_outlined,
+                      validator: _required,
+                    ),
+                    FormTextField(
+                      controller: _category,
+                      label: 'Category',
+                      icon: Icons.category_outlined,
+                      hint: 'e.g. Mobile, Tablet, Headphone',
+                    ),
+                    FormTextField(
+                      controller: _imageUrl,
+                      label: 'Image File',
+                      icon: Icons.image_outlined,
+                      hint: 'products/your_image.jpg',
+                    ),
+                  ],
+                ),
+                FormSection(
+                  title: 'Description',
+                  children: [
+                    FormTextField(
+                      controller: _description,
+                      label: 'Short Description',
+                      icon: Icons.short_text,
+                    ),
+                    FormTextField(
+                      controller: _about,
+                      label: 'Full Details',
+                      icon: Icons.description_outlined,
+                      maxLines: 3,
+                    ),
+                  ],
+                ),
+                FormSection(
+                  title: 'Pricing & Stock',
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: FormTextField(
+                            controller: _price,
+                            label: 'Price (Rs)',
+                            icon: Icons.currency_rupee,
+                            keyboardType:
+                                const TextInputType.numberWithOptions(
+                                    decimal: true),
+                            validator: _requiredNumber,
                           ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: FormTextField(
-                              controller: _stock,
-                              label: 'Stock',
-                              icon: Icons.inventory_2_outlined,
-                              keyboardType: TextInputType.number,
-                              validator: _requiredNonNegativeInt,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 6),
-                      const Text(
-                        'Discount',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          color: AppColor.textSecondary,
-                          fontSize: 13,
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                      DiscountTypeSelector(
-                        type: _discountType,
-                        onChanged: (t) => setState(() => _discountType = t),
-                      ),
-                      if (_discountType != DiscountType.none) ...[
-                        const SizedBox(height: 10),
-                        FormTextField(
-                          controller: _discountValue,
-                          label: _discountType == DiscountType.percentage
-                              ? 'Discount %'
-                              : 'Discount Rs',
-                          icon: Icons.percent,
-                          keyboardType: const TextInputType.numberWithOptions(
-                              decimal: true),
-                          validator: _requiredNumber,
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: FormTextField(
+                            controller: _stock,
+                            label: 'Stock',
+                            icon: Icons.inventory_2_outlined,
+                            keyboardType: TextInputType.number,
+                            validator: _requiredNonNegativeInt,
+                          ),
                         ),
                       ],
-                    ],
-                  ),
-                  FormSection(
-                    title: 'Visibility',
-                    children: [
-                      SwitchListTile.adaptive(
-                        contentPadding: EdgeInsets.zero,
-                        title: const Text('Active Product'),
-                        subtitle: const Text(
-                          'Visible to customers when active',
-                          style: TextStyle(
-                            color: AppColor.textTertiary,
-                            fontSize: 12,
-                          ),
-                        ),
-                        value: _isActive,
-                        onChanged: (v) => setState(() => _isActive = v),
-                        activeColor: AppColor.brandIndigo,
+                    ),
+                    const SizedBox(height: 6),
+                    const Text(
+                      'Discount',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        color: AppColor.textSecondary,
+                        fontSize: 13,
                       ),
-                      SwitchListTile.adaptive(
-                        contentPadding: EdgeInsets.zero,
-                        title: const Text('Featured Product'),
-                        subtitle: const Text(
-                          'Show on the home featured row',
-                          style: TextStyle(
-                            color: AppColor.textTertiary,
-                            fontSize: 12,
-                          ),
-                        ),
-                        value: _isFeatured,
-                        onChanged: (v) => setState(() => _isFeatured = v),
-                        activeColor: AppColor.brandIndigo,
+                    ),
+                    const SizedBox(height: 8),
+                    DiscountTypeSelector(
+                      type: _discountType,
+                      onChanged: (t) => setState(() => _discountType = t),
+                    ),
+                    if (_discountType != DiscountType.none) ...[
+                      const SizedBox(height: 10),
+                      FormTextField(
+                        controller: _discountValue,
+                        label: _discountType == DiscountType.percentage
+                            ? 'Discount %'
+                            : 'Discount Rs',
+                        icon: Icons.percent,
+                        keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true),
+                        validator: _requiredNumber,
                       ),
                     ],
-                  ),
-                  const SizedBox(height: 16),
-                  Obx(() {
-                    final loading = Get.find<AdminController>().isLoading.value;
-                    return GradientButton(
-                      text: _isEdit ? 'UPDATE PRODUCT' : 'CREATE PRODUCT',
-                      onPressed: loading ? null : _submit,
-                      isLoading: loading,
-                    );
-                  }),
-                  const SizedBox(height: 8),
-                  TextButton(
-                    onPressed: () => Get.back(),
-                    child: const Text('Cancel'),
-                  ),
-                ],
-              ),
+                  ],
+                ),
+                FormSection(
+                  title: 'Visibility',
+                  children: [
+                    SwitchListTile.adaptive(
+                      contentPadding: EdgeInsets.zero,
+                      title: const Text('Active Product'),
+                      subtitle: const Text(
+                        'Visible to customers when active',
+                        style: TextStyle(
+                          color: AppColor.textTertiary,
+                          fontSize: 12,
+                        ),
+                      ),
+                      value: _isActive,
+                      onChanged: (v) => setState(() => _isActive = v),
+                      activeColor: AppColor.brandIndigo,
+                    ),
+                    SwitchListTile.adaptive(
+                      contentPadding: EdgeInsets.zero,
+                      title: const Text('Featured Product'),
+                      subtitle: const Text(
+                        'Show on the home featured row',
+                        style: TextStyle(
+                          color: AppColor.textTertiary,
+                          fontSize: 12,
+                        ),
+                      ),
+                      value: _isFeatured,
+                      onChanged: (v) => setState(() => _isFeatured = v),
+                      activeColor: AppColor.brandIndigo,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Obx(() {
+                  final loading = Get.find<AdminController>().isLoading.value;
+                  return GradientButton(
+                    text: _isEdit ? 'UPDATE PRODUCT' : 'CREATE PRODUCT',
+                    onPressed: loading ? null : _submit,
+                    isLoading: loading,
+                  );
+                }),
+                const SizedBox(height: 8),
+                TextButton(
+                  onPressed: () => Get.back(),
+                  child: const Text('Cancel'),
+                ),
+              ],
+            ),
             ),
           ),
         ),
-      ),
-    );
+      );
   }
 
   String? _required(String? v) =>

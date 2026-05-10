@@ -8,7 +8,7 @@ import 'package:e_commerce_flutter/src/controller/theme_controller.dart';
 import 'package:e_commerce_flutter/src/core/app_theme.dart';
 import 'package:e_commerce_flutter/src/core/services/auth_service.dart';
 import 'package:e_commerce_flutter/src/core/services/session_service.dart';
- 
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 

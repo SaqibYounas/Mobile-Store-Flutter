@@ -106,6 +106,7 @@ class _Details extends StatelessWidget {
             ),
             QuantityStepper(
               quantity: product.cartQuantity,
+              maxQuantity: product.stockQuantity,
               onIncrease: () => controller.increaseItemQuantity(product),
               onDecrease: () {
                 if (product.cartQuantity > 1) {

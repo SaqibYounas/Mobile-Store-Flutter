@@ -9,15 +9,22 @@ class QuantityStepper extends StatelessWidget {
     required this.quantity,
     required this.onIncrease,
     required this.onDecrease,
+    this.maxQuantity = 9999,
+    this.minQuantity = 1,
   });
 
   final int quantity;
   final VoidCallback onIncrease;
   final VoidCallback onDecrease;
+  final int maxQuantity;
+  final int minQuantity;
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isAtMax = quantity >= maxQuantity;
+    final isAtMin = quantity <= minQuantity;
+
     return Container(
       decoration: BoxDecoration(
         color: isDark ? AppColor.darkSurfaceGrey : AppColor.surfaceGrey,
@@ -26,7 +33,11 @@ class QuantityStepper extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _StepperBtn(icon: Icons.remove, onTap: onDecrease),
+          _StepperBtn(
+            icon: Icons.remove,
+            onTap: isAtMin ? null : onDecrease,
+            isDisabled: isAtMin,
+          ),
           SizedBox(
             width: 24,
             child: Text(
@@ -35,7 +46,11 @@ class QuantityStepper extends StatelessWidget {
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
-          _StepperBtn(icon: Icons.add, onTap: onIncrease),
+          _StepperBtn(
+            icon: Icons.add,
+            onTap: isAtMax ? null : onIncrease,
+            isDisabled: isAtMax,
+          ),
         ],
       ),
     );
@@ -43,10 +58,15 @@ class QuantityStepper extends StatelessWidget {
 }
 
 class _StepperBtn extends StatelessWidget {
-  const _StepperBtn({required this.icon, required this.onTap});
+  const _StepperBtn({
+    required this.icon,
+    required this.onTap,
+    this.isDisabled = false,
+  });
 
   final IconData icon;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
+  final bool isDisabled;
 
   @override
   Widget build(BuildContext context) {
@@ -55,9 +75,11 @@ class _StepperBtn extends StatelessWidget {
       icon: Icon(
         icon,
         size: 18,
-        color: Theme.of(context).colorScheme.onSurface,
+        color: isDisabled
+            ? Theme.of(context).colorScheme.onSurface.withOpacity(0.3)
+            : Theme.of(context).colorScheme.onSurface,
       ),
-      onPressed: onTap,
+      onPressed: isDisabled ? null : onTap,
     );
   }
 }
