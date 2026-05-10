@@ -1,4 +1,4 @@
-# LuxeCart — Flutter Mobile Store
+# TrendNest — Flutter Mobile Store
 
 A modern e-commerce mobile app built in Flutter with a Supabase backend.
 Customers browse products by dynamic categories, add to cart with toast
